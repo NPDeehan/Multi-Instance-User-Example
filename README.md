@@ -10,6 +10,12 @@ victor is not, we console them.
 
 ![Token Flow Vote](./src/main/resources/image/TokenFlowVote.gif)
 
+## To Run the Project
+This is a Spring Boot project with an embedded Camunda engine. 
+To run it simply import it into your Java IDE and build it with maven to get the dependencies
+and run the ``Application.java`` class from within your IDE. 
+
+## How does it work
 
 When the process starts it will create a user task for each vote needed.
 After each user task is completed a listener will add the vote to the running tally.
@@ -44,3 +50,5 @@ public class VoteCountListener implements TaskListener {
 After all votes are completed a simple expression on the sequence flows leaving the 
 XOR gateway will decide on the direction. 
 `` #{yesVotes > noVotes} `` in the case of a draw votes will be recast. 
+
+If you feel this example is missing something, I'm very happy to get pull requests. 
