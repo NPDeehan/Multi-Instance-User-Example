@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.5.0">
+  <bpmn:process id="most-votes-example-process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="voters" label="How many people are going to vote?" type="long" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1fp17al</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1fp17al" sourceRef="StartEvent_1" targetRef="Gateway_0skjjpg" />
+    <bpmn:endEvent id="EndEvent_0x6ir2l">
+      <bpmn:incoming>Flow_1hm5b3s</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_16gzt2m" sourceRef="say-hello" targetRef="Gateway_0kcygow" />
+    <bpmn:userTask id="say-hello" name="Vote Yes or No on Candiate" camunda:formKey="embedded:app:forms/VoteForm.html" camunda:assignee="demo" camunda:candidateUsers="demo">
+      <bpmn:extensionElements>
+        <camunda:taskListener delegateExpression="#{voteCountListener}" event="complete" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0eqey82</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16gzt2m</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:loopCardinality xsi:type="bpmn:tFormalExpression">#{voters}</bpmn:loopCardinality>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0kcygow" name="Did the candidate get enough &#34;Yes&#34; votes?" default="Flow_0o974vn">
+      <bpmn:incoming>SequenceFlow_16gzt2m</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z0epfi</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1igeljr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0o974vn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0z0epfi" name="Yes" sourceRef="Gateway_0kcygow" targetRef="Activity_09kvcy6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{yesVotes &gt; noVotes}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1c44j7j">
+      <bpmn:incoming>Flow_1s4747n</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1igeljr" name="No" sourceRef="Gateway_0kcygow" targetRef="Activity_1w6j1j9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{noVotes &gt; yesVotes}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1hm5b3s" sourceRef="Activity_09kvcy6" targetRef="EndEvent_0x6ir2l" />
+    <bpmn:userTask id="Activity_09kvcy6" name="Congradulate Candiate" camunda:formKey="embedded:app:forms/CongradulateCandidateForm.html">
+      <bpmn:incoming>Flow_0z0epfi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hm5b3s</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1s4747n" sourceRef="Activity_1w6j1j9" targetRef="Event_1c44j7j" />
+    <bpmn:userTask id="Activity_1w6j1j9" name="Console Candiate" camunda:formKey="embedded:app:forms/ConsoleCandidateForm.html">
+      <bpmn:incoming>Flow_1igeljr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s4747n</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0o974vn" name="Draw" sourceRef="Gateway_0kcygow" targetRef="Gateway_0skjjpg" />
+    <bpmn:exclusiveGateway id="Gateway_0skjjpg">
+      <bpmn:incoming>SequenceFlow_1fp17al</bpmn:incoming>
+      <bpmn:incoming>Flow_0o974vn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0eqey82</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0eqey82" sourceRef="Gateway_0skjjpg" targetRef="say-hello">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="#{clearVotesListener}" event="take" />
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:textAnnotation id="TextAnnotation_0qpbi09">
+      <bpmn:text>X People voting</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0zg3cil" sourceRef="say-hello" targetRef="TextAnnotation_0qpbi09" />
+  </bpmn:process>
+  <bpmn:escalation id="Escalation_1re462n" name="Say-Hello" escalationCode="Say-Hello" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="most-votes-example-process">
+      <bpmndi:BPMNShape id="TextAnnotation_0qpbi09_di" bpmnElement="TextAnnotation_0qpbi09">
+        <dc:Bounds x="320" y="250" width="109.99521573181737" height="29.993618379068284" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_16gzt2m_di" bpmnElement="SequenceFlow_16gzt2m">
+        <di:waypoint x="470" y="187" />
+        <di:waypoint x="545" y="187" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fp17al_di" bpmnElement="SequenceFlow_1fp17al">
+        <di:waypoint x="198" y="187" />
+        <di:waypoint x="275" y="187" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z0epfi_di" bpmnElement="Flow_0z0epfi" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="595" y="187" />
+        <di:waypoint x="690" y="187" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="203" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1igeljr_di" bpmnElement="Flow_1igeljr" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="570" y="212" />
+        <di:waypoint x="570" y="350" />
+        <di:waypoint x="690" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="578" y="280" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hm5b3s_di" bpmnElement="Flow_1hm5b3s">
+        <di:waypoint x="790" y="187" />
+        <di:waypoint x="852" y="187" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s4747n_di" bpmnElement="Flow_1s4747n">
+        <di:waypoint x="790" y="350" />
+        <di:waypoint x="852" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o974vn_di" bpmnElement="Flow_0o974vn" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="570" y="162" />
+        <di:waypoint x="570" y="100" />
+        <di:waypoint x="300" y="100" />
+        <di:waypoint x="300" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="423" y="82" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eqey82_di" bpmnElement="Flow_0eqey82">
+        <di:waypoint x="325" y="187" />
+        <di:waypoint x="370" y="187" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_08mft2c_di" bpmnElement="say-hello">
+        <dc:Bounds x="370" y="147" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0kcygow_di" bpmnElement="Gateway_0kcygow" isMarkerVisible="true" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="545" y="162" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="577" y="120" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0x6ir2l_di" bpmnElement="EndEvent_0x6ir2l">
+        <dc:Bounds x="852" y="169" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1c44j7j_di" bpmnElement="Event_1c44j7j">
+        <dc:Bounds x="852" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0n60kqd_di" bpmnElement="Activity_1w6j1j9">
+        <dc:Bounds x="690" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02k1cjm_di" bpmnElement="Activity_09kvcy6">
+        <dc:Bounds x="690" y="147" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0skjjpg_di" bpmnElement="Gateway_0skjjpg" isMarkerVisible="true">
+        <dc:Bounds x="275" y="162" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="169" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0zg3cil_di" bpmnElement="Association_0zg3cil">
+        <di:waypoint x="416" y="227" />
+        <di:waypoint x="414" y="250" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

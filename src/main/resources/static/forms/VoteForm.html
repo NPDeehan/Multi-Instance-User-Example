@@ -1,0 +1,64 @@
+<head>
+    <style>
+.button {
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.button1 {background-color: #4CAF50;} /* Green */
+.button2 {background-color: #008CBA;} /* Blue */
+</style>
+</head>
+<strong>Vote For Niall!</strong>
+
+<!--<script cam-script type="text/form-script">-->
+
+<!--  var variableManager = camForm.variableManager;-->
+
+<!--  camForm.on('submit', function() {-->
+<!--    // make the variableManager forget about the invoiceData variable-->
+<!--    camForm.variableManager.-->
+<!--    camForm.variableManager.destroyVariable('invoiceData');-->
+<!--  });-->
+
+
+<!--</script>-->
+
+
+
+
+
+<form role="form" class="form-horizontal">
+
+    <div class="control-group">
+        <label class="control-label">What is your name?</label>
+        <div class="controls">
+            <input type="text" class="form-control"
+                   cam-variable-name="name"
+                   cam-variable-type="String"
+                   required
+            />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Do you want to vote for Niall</label>
+        <div class="controls">
+            <input type="checkbox" class="form-control"
+                   cam-variable-name="approved"
+                   cam-variable-type="Boolean"
+            />
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+
+
+</form>
